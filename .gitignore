@@ -1,0 +1,208 @@
+# .gitignore — Backend
+
+# ╔═ Environment & Secrets ════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ NEVER commit these. They contain API keys, database passwords, and        ║
+# ║ other sensitive configuration that changes per machine.                   ║
+# ║                                                                            ║
+# ║ Instead:                                                                   ║
+# ║  1. Create .env locally (not in git)                                      ║
+# ║  2. Share a .env.example with placeholder values (GROQ_API_KEY=xxx)       ║
+# ║  3. Team members copy .env.example → .env and fill in their own keys      ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.env
+.env.local
+.env.*.local
+.env.production
+
+
+# ╔═ Python Virtual Environment ═══════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ The venv/ folder contains Python packages specific to your project.       ║
+# ║ Size: 100MB+ (don't commit!)                                              ║
+# ║                                                                            ║
+# ║ When teammates clone the project, they run:                               ║
+# ║   python3 -m venv venv                                                    ║
+# ║   source venv/bin/activate  (or venv\Scripts\activate on Windows)         ║
+# ║   pip install -r requirements.txt                                          ║
+# ║                                                                            ║
+# ║ This recreates the venv on their machine with the same package versions.  ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+venv/
+env/
+ENV/
+.venv
+.venv/
+.env_venv/
+
+
+# ╔═ Python Cache & Compiled Files ════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ __pycache__: Generated when Python imports .py files                      ║
+# ║ *.pyc:       Compiled Python bytecode (machine-specific)                  ║
+# ║ *.pyo:       Optimized Python bytecode                                    ║
+# ║ *.pyd:       Python extension module                                      ║
+# ║                                                                            ║
+# ║ These are auto-generated and useless in a repo.                           ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+
+# ╔═ IDEs & Editors ═══════════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ VS Code, PyCharm, Sublime, vim, etc. each create their own config files.  ║
+# ║ These are personal — your teammate's editor setup shouldn't end up in     ║
+# ║ the shared repo.                                                          ║
+# ║                                                                            ║
+# ║ Teams usually share a .editorconfig or CONTRIBUTING.md instead, which     ║
+# ║ explains the linting rules (line length, indentation) without requiring   ║
+# ║ everyone to commit their own .vscode/settings.json.                       ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+
+
+# ╔═ Testing & Coverage ═══════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ Pytest and coverage tools generate reports that are local to your machine ║
+# ║ and should be regenerated fresh each time.                                ║
+# ║                                                                            ║
+# ║ CI/CD pipelines (GitHub Actions, etc.) generate their own coverage data  ║
+# ║ and upload it to services like Codecov.                                   ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+
+
+# ╔═ Build & Distribution ═════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ If you ever package your backend as a Python package (e.g. with setuptools),
+# ║ these folders are auto-generated during build and should never be committed.
+# ║                                                                            ║
+# ║ For a simple API project, you won't hit these, but it's good practice to ║
+# ║ include them.                                                             ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+
+# ╔═ Database Files ═══════════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ If you ever add SQLite (or other file-based databases), don't commit the  ║
+# ║ .db files. They contain user data and vary per environment.               ║
+# ║                                                                            ║
+# ║ For this project, we're using JSON, so you can comment these out.         ║
+# ║ Keep them for future reference.                                           ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+*.db
+*.sqlite
+*.sqlite3
+*.DatabaseCredentials
+
+
+# ╔═ Logs & Temp Files ═══════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ Application logs and temporary files are ephemeral — they should never    ║
+# ║ end up in version control.                                                ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+
+# ╔═ OS-Specific Files ════════════════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ macOS and Windows create these automatically. They clutter commits and    ║
+# ║ cause merge conflicts across platforms.                                   ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+ehthumbs.db
+
+
+# ╔═ Linting & Formatting Tools ══════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ Black, isort, flake8, etc. sometimes generate cache files.                ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.black/
+
+
+# ╔═ Environment-Specific Configs ════════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ If you use uvicorn directly (not Docker), you might create a .env file   ║
+# ║ specific to development, testing, or production. All should be ignored.  ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+.env.dev
+.env.test
+.env.staging
+
+
+# ╔═ Optional: Commit These Instead ══════════════════════════════════════════╗
+# ║                                                                            ║
+# ║ Instead of ignoring these forever, create versions WITH placeholder      ║
+# ║ values that you DO commit. Team members use them as templates.            ║
+# ║                                                                            ║
+# ║ Examples:                                                                 ║
+# ║   .env.example       ← GROQ_API_KEY=paste_your_key_here                  ║
+# ║   requirements.txt   ← should be committed (lists all dependencies)       ║
+# ║   pyproject.toml     ← should be committed (if using Poetry)              ║
+# ║                                                                            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
