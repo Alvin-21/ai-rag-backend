@@ -1,0 +1,64 @@
+[
+    {
+        "id": "1",
+        "title": "Refund Policy",
+        "tags": [
+            "refund",
+            "return",
+            "money",
+            "policy",
+            "cancel"
+        ],
+        "content": "Customers can request a full refund within 7 days of purchase. After 7 days, we offer store credit only. To initiate a refund, email support@company.com with your order number."
+    },
+    {
+        "id": "2",
+        "title": "Shipping Information",
+        "tags": [
+            "shipping",
+            "delivery",
+            "ship",
+            "track",
+            "arrive"
+        ],
+        "content": "Standard shipping takes 3-5 business days. Express shipping takes 1-2 business days. All orders over $50 qualify for free standard shipping. Tracking information is emailed when your order ships."
+    },
+    {
+        "id": "3",
+        "title": "Product Warranty",
+        "tags": [
+            "warranty",
+            "broken",
+            "repair",
+            "defective",
+            "guarantee"
+        ],
+        "content": "All products come with a 1-year manufacturer warranty. This covers defects in materials and workmanship. Damage from misuse is not covered. Contact support with photos of the defect to initiate a warranty claim."
+    },
+    {
+        "id": "4",
+        "title": "Account & Login Help",
+        "tags": [
+            "account",
+            "login",
+            "password",
+            "reset",
+            "sign in",
+            "forgot"
+        ],
+        "content": "To reset your password, click 'Forgot Password' on the login page. A reset link will be sent to your registered email. If you no longer have access to that email, contact support@company.com with your name and order history."
+    },
+    {
+        "id": "5",
+        "title": "Contact & Support Hours",
+        "tags": [
+            "contact",
+            "support",
+            "hours",
+            "help",
+            "email",
+            "phone"
+        ],
+        "content": "Our support team is available Monday through Friday, 9 AM to 6 PM EST. Email support@company.com or call 1-800-555-0100. Average email response time is 4 hours during business hours."
+    }
+]
