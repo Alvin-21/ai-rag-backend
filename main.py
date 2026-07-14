@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException
 from models.schemas import ChatRequest, ChatResponse
 from services.retrieval import search_knowledge_base
 from services.groq_client import get_ai_response
@@ -25,10 +26,14 @@ async def chat(request: ChatRequest):
     """
     Main endpoint. Steps:
     1. Receive the user's message
-    2. Search the knowledge base for relevant articles
-    3. Build a prompt with the retrieved context
-    4. Call Groq and return the AI response
+    2. Validate the message
+    3. Search the knowledge base for relevant articles
+    4. Build a prompt with the retrieved context
+    5. Call Groq and return the AI response
     """
+    if not request.message or not request.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
+
     # Step 1: Retrieve relevant knowledge
     results = search_knowledge_base(request.message)
 
@@ -39,10 +44,13 @@ async def chat(request: ChatRequest):
     ])
 
     # Step 3: Get AI response
-    reply = await get_ai_response(
-        user_question=request.message,
-        context=context
-    )
+    try:
+        reply = await get_ai_response(
+            user_question=request.message,
+            context=context
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail="AI service error")
 
     # Step 4: Return structured response
     return ChatResponse(
