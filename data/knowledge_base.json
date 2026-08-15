@@ -60,5 +60,246 @@
             "phone"
         ],
         "content": "Our support team is available Monday through Friday, 9 AM to 6 PM EST. Email support@company.com or call 1-800-555-0100. Average email response time is 4 hours during business hours."
+    },
+    {
+        "id": "6",
+        "title": "Payment Methods",
+        "tags": [
+            "payment",
+            "pay",
+            "card",
+            "credit",
+            "debit",
+            "checkout"
+        ],
+        "content": "We accept Visa, Mastercard, American Express, and other major credit and debit cards. Payment is processed securely at checkout. Orders are only confirmed after successful payment authorization."
+    },
+    {
+        "id": "7",
+        "title": "Order Cancellation",
+        "tags": [
+            "cancel",
+            "cancellation",
+            "order",
+            "change",
+            "stop"
+        ],
+        "content": "Orders can be cancelled before they are shipped. To request a cancellation, contact support as soon as possible with your order number. Once an order has shipped, it cannot be cancelled and must follow the return policy."
+    },
+    {
+        "id": "8",
+        "title": "Order Tracking",
+        "tags": [
+            "track",
+            "tracking",
+            "order",
+            "shipment",
+            "status"
+        ],
+        "content": "Once your order ships, you will receive a tracking number by email. You can use the tracking number on the carrier's website to view delivery updates. Tracking information may take up to 24 hours to become active."
+    },
+    {
+        "id": "9",
+        "title": "International Shipping",
+        "tags": [
+            "international",
+            "shipping",
+            "overseas",
+            "delivery",
+            "countries"
+        ],
+        "content": "We currently ship to selected international destinations. International delivery times vary by destination and typically take 7-14 business days. Customers are responsible for any customs duties or import taxes charged by their country."
+    },
+    {
+        "id": "10",
+        "title": "Damaged Orders",
+        "tags": [
+            "damaged",
+            "damage",
+            "broken",
+            "package",
+            "delivery"
+        ],
+        "content": "If your order arrives damaged, contact support within 48 hours of delivery. Include your order number and clear photos of the damaged product and packaging. We will review the claim and provide replacement or refund options where applicable."
+    },
+    {
+        "id": "11",
+        "title": "Missing Items",
+        "tags": [
+            "missing",
+            "item",
+            "order",
+            "package",
+            "incorrect"
+        ],
+        "content": "If an item is missing from your order, contact support with your order number and details of the missing product. We will investigate the shipment and arrange a replacement or other appropriate solution."
+    },
+    {
+        "id": "12",
+        "title": "Incorrect Item Received",
+        "tags": [
+            "wrong",
+            "incorrect",
+            "item",
+            "order",
+            "replacement"
+        ],
+        "content": "If you receive an item different from what you ordered, contact support within 7 days of delivery. Provide your order number and photos of the item received. We will arrange a replacement or provide instructions for returning the incorrect item."
+    },
+    {
+        "id": "13",
+        "title": "Product Availability",
+        "tags": [
+            "stock",
+            "available",
+            "availability",
+            "sold out",
+            "inventory"
+        ],
+        "content": "Product availability is displayed on each product page. Items marked 'In Stock' are generally available for immediate purchase. If a product is sold out, you may check back later or contact support for information about potential restocking."
+    },
+    {
+        "id": "14",
+        "title": "Out of Stock Products",
+        "tags": [
+            "out of stock",
+            "sold out",
+            "restock",
+            "inventory",
+            "product"
+        ],
+        "content": "Products that are temporarily unavailable are marked as 'Out of Stock'. Restocking times vary by product. Contact support if you need information about when a specific product may become available again."
+    },
+    {
+        "id": "15",
+        "title": "Discount Codes",
+        "tags": [
+            "discount",
+            "coupon",
+            "promo",
+            "code",
+            "promotion"
+        ],
+        "content": "Discount codes can be entered during checkout in the promotion code field. Only one discount code may be used per order unless otherwise stated. Discount codes cannot be applied after an order has been placed."
+    },
+    {
+        "id": "16",
+        "title": "Gift Cards",
+        "tags": [
+            "gift",
+            "card",
+            "voucher",
+            "balance",
+            "redeem"
+        ],
+        "content": "Gift cards can be used to purchase eligible products through our online store. Enter the gift card code during checkout to apply the available balance. Gift cards cannot be exchanged for cash and are not refundable."
+    },
+    {
+        "id": "17",
+        "title": "Price Matching",
+        "tags": [
+            "price",
+            "match",
+            "competitor",
+            "cheaper",
+            "pricing"
+        ],
+        "content": "We may offer price matching on identical products sold by authorised competitors. The competing product must be currently available and meet our price-match requirements. Contact support before purchasing to request a price-match review."
+    },
+    {
+        "id": "18",
+        "title": "Product Care Instructions",
+        "tags": [
+            "care",
+            "maintenance",
+            "instructions",
+            "clean",
+            "product"
+        ],
+        "content": "Follow the care and maintenance instructions provided with each product. Proper care can help extend product life and maintain performance. Damage caused by failure to follow recommended care instructions may not be covered under warranty."
+    },
+    {
+        "id": "19",
+        "title": "Privacy Policy",
+        "tags": [
+            "privacy",
+            "data",
+            "personal",
+            "information",
+            "security"
+        ],
+        "content": "We collect and use personal information to process orders, provide customer support, and improve our services. We take reasonable measures to protect customer information and do not sell personal information to third parties."
+    },
+    {
+        "id": "20",
+        "title": "Data Security",
+        "tags": [
+            "security",
+            "data",
+            "payment",
+            "protection",
+            "account"
+        ],
+        "content": "We use security measures designed to protect customer accounts, payment information, and personal data. Customers should use strong passwords and avoid sharing their account credentials. Contact support immediately if you believe your account has been compromised."
+    },
+    {
+        "id": "21",
+        "title": "Terms of Service",
+        "tags": [
+            "terms",
+            "service",
+            "conditions",
+            "agreement",
+            "rules"
+        ],
+        "content": "By using our website and services, customers agree to comply with our terms of service. The terms describe acceptable use, purchasing conditions, account responsibilities, and limitations of liability. Customers should review the terms before using our services."
+    },
+    {
+        "id": "22",
+        "title": "Website Accessibility",
+        "tags": [
+            "accessibility",
+            "disabled",
+            "accessible",
+            "website",
+            "support"
+        ],
+        "content": "We aim to make our website accessible to customers with different abilities. If you experience difficulty accessing any part of the website, contact support and describe the issue so we can assist you."
+    },
+    {
+        "id": "23",
+        "title": "Business Hours & Holidays",
+        "tags": [
+            "hours",
+            "holiday",
+            "business",
+            "closed",
+            "support"
+        ],
+        "content": "Customer support is available Monday through Friday from 9 AM to 6 PM EST, excluding major public holidays. Orders can still be placed online outside support hours, but responses and order processing may take longer during holidays."
+    },
+    {
+        "id": "24",
+        "title": "Subscription Management",
+        "tags": [
+            "subscription",
+            "subscribe",
+            "recurring",
+            "billing",
+            "cancel"
+        ],
+        "content": "Customers can manage eligible subscriptions through their account settings. Subscription plans can be cancelled before the next billing date to prevent future charges. Changes to a subscription may take effect at the beginning of the next billing cycle."
+    },
+    {
+        "id": "25",
+        "title": "Customer Reviews",
+        "tags": [
+            "review",
+            "rating",
+            "feedback",
+            "product",
+            "comment"
+        ],
+        "content": "Customers may submit reviews and ratings for products they have purchased. Reviews should be honest, relevant, and respectful. We reserve the right to remove reviews that contain offensive, fraudulent, misleading, or inappropriate content."
     }
 ]
