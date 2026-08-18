@@ -12,7 +12,7 @@ load_dotenv()
 # NEVER hardcode the key directly in your code — it could end up in git.
 client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
 
-MODEL = "llama-3.1-8b-instant"
+MODEL = "openai/gpt-oss-20b"
 
 #   [
 #        { "role": "system",    "content": "You are a support agent. Context: ..." },
@@ -33,7 +33,7 @@ MODEL = "llama-3.1-8b-instant"
 #
 # WHY LIMIT HISTORY LENGTH?
 #   Language models have a context window — a maximum number of tokens they
-#   can process in one request. llama-3.1-8b-instant supports 8,192 tokens.
+#   can process in one request. openai/gpt-oss-20b supports 8,192 tokens.
 #   If we send the full conversation history forever, we'll hit this limit.
 #   Keeping the last N messages is the simplest safe solution.
 

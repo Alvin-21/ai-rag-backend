@@ -50,7 +50,8 @@ async def chat(request: ChatRequest):
             context=context,
             history=request.history
         )
-    except Exception:
+    except Exception as e:
+        print(f"[ERROR] /chat failed: {e}")
         raise HTTPException(status_code=500, detail="AI service error")
 
     # Step 4: Return structured response
