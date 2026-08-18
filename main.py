@@ -47,7 +47,8 @@ async def chat(request: ChatRequest):
     try:
         reply = await get_ai_response(
             user_question=request.message,
-            context=context
+            context=context,
+            history=request.history
         )
     except Exception:
         raise HTTPException(status_code=500, detail="AI service error")
