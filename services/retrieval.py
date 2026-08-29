@@ -156,8 +156,6 @@ def search_knowledge_base(question: str, top_k: int = 2) -> List[Dict]:
         cs = combined_score(kw, fz)
         scored.append((article, kw, fz, cs))
 
-    print([score for _, _, _, score in scored])
-
     # Filter: keep articles that pass either the keyword or fuzzy bar
     candidates = [
         (article, cs)
