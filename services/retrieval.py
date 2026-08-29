@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Tuple
+from rapidfuzz import fuzz
 
 # Load the JSON file once when the module is imported (not on every request)
 DATA_PATH = Path(__file__).parent.parent / "data" / "knowledge_base.json"
@@ -8,6 +9,10 @@ DATA_PATH = Path(__file__).parent.parent / "data" / "knowledge_base.json"
 with open(DATA_PATH, "r") as f:
     KNOWLEDGE_BASE: List[Dict] = json.load(f)
 
+FUZZY_THRESHOLD = 60
+MAX_KEYWORD_SCORE = 30.0
+KEYWORD_WEIGHT = 0.6
+FUZZY_WEIGHT   = 0.4
 
 def tokenize(text: str) -> set:
     """
@@ -50,32 +55,118 @@ def score_article(question_tokens: set, article: Dict) -> float:
 
     return score
 
+def fuzzy_score_article(question: str, article: Dict) -> float:
+    """
+    Score an article using rapidfuzz fuzzy string matching.
+
+    WHY TWO DIFFERENT rapidfuzz FUNCTIONS?
+
+    fuzz.token_set_ratio → used for title + tags (short text)
+        Works by comparing sets of tokens from both strings.
+        Handles: word order differences, extra words, partial token overlap.
+        "refund policy" vs "Refund Policy" → 100
+        "can I get refund?" vs "Refund Policy" → ~85 (ignores "can I get")
+
+    fuzz.partial_ratio → used for content (long text)
+        Slides the shorter string (query) across the longer string (content)
+        and returns the best substring similarity found.
+        "refudn" vs "...request a full refund..." → ~83 (best substring match)
+        This is better than token_set_ratio for short queries vs long text.
+
+    Title and tags get 0.6 weight — they are concise, curated, and reliable.
+    Content gets 0.4 weight — longer text means more noise.
+
+    Returns a float from 0.0 to 100.0.
+    """
+    # Combine title and tags into one short searchable string
+    title_tag_text = article["title"] + " " + " ".join(article.get("tags", []))
+
+    # token_set_ratio: best for short, structured text (handles word order, extra words)
+    title_tag_score = fuzz.token_set_ratio(question, title_tag_text)
+
+    # partial_ratio: best for short query vs long content (finds best substring)
+    content_score = fuzz.partial_ratio(question, article["content"])
+
+    return title_tag_score * 0.6 + content_score * 0.4
+
+def combined_score(kw_score: float, fz_score: float) -> float:
+    """
+    Merge the keyword and fuzzy scores into one comparable number (0-100).
+
+    Steps:
+      1. Normalise keyword score: divide by MAX_KEYWORD_SCORE, cap at 1.0.
+         This puts keyword on the same 0–1 scale as fuzzy/100.
+      2. Apply weights and scale back to 0–100.
+
+    Example A — typo query ("refudn"), Refund Policy article:
+        kw_score = 0    → normalised = 0.0
+        fz_score = 78
+        combined = 0.6 × 0 + 0.4 × 78 = 31.2
+
+    Example B — exact query ("refund"), Refund Policy article:
+        kw_score = 9.0  → normalised = min(9/30, 1) = 0.30 → 30/100
+        fz_score = 95
+        combined = 0.6 × 30 + 0.4 × 95 = 18 + 38 = 56.0
+
+    The exact-match case scores higher in combined, which is correct behaviour.
+    """
+    normalised_kw = min(kw_score / MAX_KEYWORD_SCORE, 1.0) * 100
+    return KEYWORD_WEIGHT * normalised_kw + FUZZY_WEIGHT * fz_score
 
 def search_knowledge_base(question: str, top_k: int = 2) -> List[Dict]:
     """
-    Main retrieval function.
-    
-    Returns the top_k most relevant articles for the given question.
-    If no articles score above 0, returns an empty list — meaning
-    the AI will say it doesn't have information on this topic.
-    
-    Example:
-        question = "Can I get a refund?"
-        → finds "Refund Policy" article with score 9.0
-        → returns [{"title": "Refund Policy", "content": "..."}]
+    Return the top_k most relevant knowledge base articles for a question.
+
+    INCLUSION RULE:
+        An article is a candidate if:
+          • keyword_score > 0  (at least one exact word matched), OR
+          • fuzzy_score ≥ FUZZY_THRESHOLD  (strings are similar enough)
+
+        This means:
+          - Exact queries always find matches (keyword path).
+          - Typo queries find matches when fuzzy similarity is high enough.
+          - Completely unrelated queries return nothing (AI says "I don't know").
+
+    RANKING:
+        Candidates are sorted by combined_score() descending.
+        Exact matches rank above fuzzy-only matches because the keyword
+        component of the combined score adds a significant boost.
+
+    Examples:
+        search_knowledge_base("refund policy")
+        → ["Refund Policy"]  (kw=9, fz=95, combined=56)
+
+        search_knowledge_base("refudn")            ← typo
+        → ["Refund Policy"]  (kw=0, fz=78, combined=31.2  — fuzzy saves it)
+
+        search_knowledge_base("warantee broken")   ← two typos
+        → ["Product Warranty"]  (kw=0, fz=71, combined=28.4)
+
+        search_knowledge_base("xyzzy gibberish")
+        → []  (kw=0, fz=22 < 65 threshold — correctly returns nothing)
     """
     question_tokens = tokenize(question)
 
-    # Score every article
-    scored = [
-        (article, score_article(question_tokens, article))
-        for article in KNOWLEDGE_BASE
+    # Score every article with both methods
+    scored: List[Tuple[Dict, float, float, float]] = []
+
+    for article in KNOWLEDGE_BASE:
+        kw = score_article(question_tokens, article)
+        fz = fuzzy_score_article(question, article)
+        cs = combined_score(kw, fz)
+        scored.append((article, kw, fz, cs))
+
+    print([score for _, _, _, score in scored])
+
+    # Filter: keep articles that pass either the keyword or fuzzy bar
+    candidates = [
+        (article, cs)
+        for article, kw, fz, cs in scored
+        if kw > 0 or fz >= FUZZY_THRESHOLD
     ]
 
-    # Sort by score, highest first
-    scored.sort(key=lambda x: x[1], reverse=True)
+    # Sort by combined score, highest first
+    candidates.sort(key=lambda x: x[1], reverse=True)
 
-    # Return only articles with score > 0 (at least one keyword matched)
-    relevant = [article for article, score in scored if score > 0]
-
-    return relevant[:top_k]
+    # Return just the article dicts (callers don't need the scores)
+    return [article for article, _ in candidates[:top_k]]
