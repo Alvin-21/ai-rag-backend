@@ -1,4 +1,5 @@
 import json
+import threading
 from pathlib import Path
 from typing import List, Dict, Tuple
 from rapidfuzz import fuzz
@@ -6,13 +7,112 @@ from rapidfuzz import fuzz
 # Load the JSON file once when the module is imported (not on every request)
 DATA_PATH = Path(__file__).parent.parent / "data" / "knowledge_base.json"
 
-with open(DATA_PATH, "r") as f:
-    KNOWLEDGE_BASE: List[Dict] = json.load(f)
+# ─── Private hot-reload state ─────────────────────────────────────────────────
+#
+# These are MODULE-LEVEL variables — they live for the lifetime of the process.
+# Prefixed with _ to signal "internal, don't import these directly".
+#
+# _kb_data  : the in-memory knowledge base (list of article dicts)
+# _kb_mtime : the st_mtime value at the time of the last successful load
+# _kb_lock  : prevents two threads reloading simultaneously
+
+_kb_data: List[Dict] = []
+_kb_mtime: float = 0.0
+_kb_lock = threading.Lock()
 
 FUZZY_THRESHOLD = 60
 MAX_KEYWORD_SCORE = 30.0
 KEYWORD_WEIGHT = 0.6
 FUZZY_WEIGHT   = 0.4
+
+def _load_kb() -> None:
+    """
+    Read DATA_PATH from disk and update the in-memory cache.
+
+    Called on startup and whenever the file's mtime changes.
+    NOT called directly by application code — use _get_kb() instead.
+
+    Raises:
+        FileNotFoundError  – if the JSON file doesn't exist yet
+        json.JSONDecodeError – if the file contains invalid JSON
+
+    Both exceptions are caught by _get_kb() so the server never crashes.
+    """
+    global _kb_data, _kb_mtime
+
+    with open(DATA_PATH, encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Only update state after a successful parse.
+    # If json.load() raises, _kb_data and _kb_mtime are unchanged.
+    _kb_data  = data
+    _kb_mtime = DATA_PATH.stat().st_mtime
+
+    print(
+        f"[KB] ✓ Loaded {len(_kb_data)} article(s) from '{DATA_PATH.name}'"
+    )
+
+def _get_kb() -> List[Dict]:
+    """
+    Return the knowledge base, reloading from disk if the file changed.
+
+    This is the single entry point used by all retrieval functions.
+
+    Decision tree on every call:
+      1. stat() the file → get current mtime              (~1 µs)
+      2. Compare to stored _kb_mtime
+         a. Different → acquire lock → reload → release   (~1 ms, rare)
+         b. Same      → return cached _kb_data            (~0 µs)
+      3. Return _kb_data
+
+    Error handling:
+      FileNotFoundError  → warn, return current cache (may be [])
+      json.JSONDecodeError → warn, keep previous valid data
+    """
+    global _kb_mtime
+
+    try:
+        current_mtime = DATA_PATH.stat().st_mtime
+    except FileNotFoundError:
+        print(f"[KB] ⚠ '{DATA_PATH.name}' not found — returning cached data")
+        return _kb_data
+
+    # Fast path: file hasn't changed, return cache immediately
+    if current_mtime == _kb_mtime:
+        return _kb_data
+
+    # Slow path: file changed — reload under the lock
+    with _kb_lock:
+        # Re-check inside the lock.
+        # Another thread may have already reloaded while we waited to acquire.
+        if current_mtime != _kb_mtime:
+            print(f"[KB] ↻ Change detected in '{DATA_PATH.name}' — reloading…")
+            try:
+                _load_kb()
+            except json.JSONDecodeError as e:
+                # Bad JSON (e.g. file saved mid-edit) — keep previous data
+                print(f"[KB] ⚠ JSON error: {e}")
+                print(f"[KB]   Fix the file and save again to reload.")
+                # Bump _kb_mtime so we don't retry on every request
+                # until the file is saved again (mtime will change again).
+                _kb_mtime = current_mtime
+
+    return _kb_data
+
+# ─── Initial load at import time ──────────────────────────────────────────────
+#
+# When uvicorn imports this module, we load the KB immediately so the first
+# request is never slower than subsequent ones.
+# If the file is missing at startup, we log a warning but don't crash —
+# _get_kb() will retry on every request.
+
+try:
+    _load_kb()
+except FileNotFoundError:
+    print(
+        f"[KB] ⚠ '{DATA_PATH}' not found at startup.\n"
+        f"[KB]   Create the file and the next request will load it."
+    )
 
 def tokenize(text: str) -> set:
     """
@@ -145,12 +245,14 @@ def search_knowledge_base(question: str, top_k: int = 2) -> List[Dict]:
         search_knowledge_base("xyzzy gibberish")
         → []  (kw=0, fz=22 < 65 threshold — correctly returns nothing)
     """
+    kb = _get_kb()
+
     question_tokens = tokenize(question)
 
     # Score every article with both methods
     scored: List[Tuple[Dict, float, float, float]] = []
 
-    for article in KNOWLEDGE_BASE:
+    for article in kb:
         kw = score_article(question_tokens, article)
         fz = fuzzy_score_article(question, article)
         cs = combined_score(kw, fz)
