@@ -22,7 +22,10 @@ async def rate_limit_exceeded_handler(request: Request, exc: Exception):
     """Handle rate limit exceeded errors with a proper JSON response."""
     return JSONResponse(
         status_code=429,
-        content={"error": str(exc)},
+        content={
+            "error": str(exc),
+            "message": "You've sent too many requests. Please wait a moment."
+            },
     )
 
 # Register the 429 handler.
@@ -46,7 +49,7 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/chat", response_model=ChatResponse)
-@limiter.limit("10/minute")
+@limiter.limit("1/minute")
 async def chat(request: Request, body: ChatRequest):
     """
     Main endpoint. Steps:
