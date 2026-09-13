@@ -49,7 +49,7 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/chat", response_model=ChatResponse)
-@limiter.limit("1/minute")
+@limiter.limit("10/minute")
 async def chat(request: Request, body: ChatRequest):
     """
     Main endpoint. Steps:
